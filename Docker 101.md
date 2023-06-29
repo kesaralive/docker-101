@@ -61,13 +61,7 @@ Next, Open up the terminal(Linux, Mac), or powershell(Windows) in your main proj
 docker compose up
 ```
 >**Note** \
-> You need to have an Internet connection to perform above command for the first time.
-> First time setup will be take some time because it will pull the `httpd` image from the docker image hub.
+> You need to have an Internet connection to perform above command for the first time. \
+> First time setup will be take some time because it has to pull the `httpd` image from the docker image hub. \
+
 At this point, you should be able to see your frontend application at `http://localhost:3000/`. 
-
-
-> **Note**
-> This is a note
-
-> **Warning**
-> This is a warning
