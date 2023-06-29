@@ -9,9 +9,12 @@ docker compose version
 If you haven't install docker in your computer, Please follow the instructions given in the official Docker documentation for the installation.
 <a href="https://docs.docker.com/engine/install/" target="_blank">Docker Installation.</a>
 
-[![Docker Container Stack](/docker-container-stack.png)]
+## Architecture
+Today, we're going to create below docker container stack that contains a frontend container, backend api container and a mysql database container. First we'll start by creating our frontend container.
 
-## Frontend App
+[![Docker Container Stack](/home/kesaralive/Documents/blog/docker-101/docker-container-stack.png)]
+
+## Frontend App Container
 First let's create our main project folder. Inside that folder let's make another folder name `frontend` to manage our frontend application. After that let's add a simple `index.html` file inside the frontend folder to check whether the frontend app is working correctly. \
 Next, Let's create a new `docker-compose.yml` file to deploy the frontend app inside a docker container. 
 
@@ -57,5 +60,14 @@ Next, Open up the terminal(Linux, Mac), or powershell(Windows) in your main proj
 ```
 docker compose up
 ```
-At this point, you should be able to see your frontend application at `http://localhost:3000/`
+>**Note**
+> You need to have an Internet connection to perform above command for the first time.
+> First time setup will be take some time because it will pull the `httpd` image from the docker image hub.
+At this point, you should be able to see your frontend application at `http://localhost:3000/`. 
 
+
+> **Note**
+> This is a note
+
+> **Warning**
+> This is a warning
