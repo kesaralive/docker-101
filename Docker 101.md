@@ -1,22 +1,26 @@
 # Docker Compose for absolute beginers 
 
 ## Docker installation
-RUN below commands in your terminal (Linux, MacOS) or powershell (Windows) to check whether you have installed docker or not.
+Please run the following commands in your terminal (for Linux and MacOS) or PowerShell (for windows) in order to check the presence of Docker installation on your computer.
 ```
 docker version
 docker compose version
 ```
-If you haven't install docker in your computer, Please follow the instructions given in the official Docker documentation for the installation.
-<a href="https://docs.docker.com/engine/install/" target="_blank">Docker Installation.</a>
+In case Docker is not installed on your computer, kindly refer to the instructions provided in the official Docker documentation for proper installation guidance.
+<a href="https://docs.docker.com/engine/install/" target="_blank">Docker Installation (Official Docker Documentation).</a>
 
 ## A Simple 3-Tier Architecture
-Today, we're going to create below simple 3-tier architecture using docker containers. It contains a frontend container, backend api container and a mysql database container. First we'll start by creating our frontend container.
+Today, our objective is to build a basic 3-tier architecture using Docker containers. This architecture has three components.
+1. A frontend container
+2. A backend container (With an API layer)
+3. A MySQL database container
 
 [![Docker Container Stack](/docker-container-stack.png)]
 
 ## Frontend App Container
-First let's create our main project folder. Inside that folder let's make another folder name `frontend` to manage our frontend application. After that let's add a simple `index.html` file inside the frontend folder to check whether the frontend app is working correctly when it's deployed. \
-Next, Let's create a new `docker-compose.yml` file to deploy the frontend app inside a docker container. 
+To start our project, Let's create the main project folder. Within the main folder, we'll create another folder called `frontend` to handle our frontend application. After that we can add a simple `index.html` file inside the frontend folder. This will help us to check whether the frontend app is working or not once it is deployed. \
+\
+Next, we will create a new file named `docker-compose.yml` as our configuration file for deploying the frontend application within a Docker container.
 
 **index.html**
 ``` html
@@ -44,6 +48,16 @@ services:
       - 3000:80
 ```
 
+Let's discuss a little bit about our `docker-compose.yml` configuration.
+> - __version: "3"__ : This tells us the version of the `Docker Compose` file format.
+> - __services__ : This section contains the services to be deployed. (In our case, frontend container)
+> - __frontend__ : This is the name of the service. You can choose any name you prefer. Ex: `frontend-service`
+> - __image: httpd:latest__ : This line tells the Docker image to be used for the frontend service. In our case, we use the `httpd` image with the `latest` tag. `httpd` image is the official image for the Apache HTTP Server.
+> - __volumes:__ : This section is used to mount the local filesystem directory (File directory in your computer) to the container.
+>   - __- "./frontend:/usr/local/apache2/htdocs"__ : This line specifies the volume mapping. It maps the `./frontend` directory from the local filesystem to the `/usr/local/apache2/htdocs` directory inside the container. This allows the container to access the files in the frontend directory.
+> - __ports:__ : This section defines the port mapping between the host (Your computer) and the container.
+>   - __- 3000:80__ : This line maps port 3000 of the host machine (Your computer) to port 80 of the container. It means that when the container is running, you can access the frontend application on http://localhost:3000 in your web browser.
+
 ### Main Project directory 
 After all the settings, you should have a folder structure like this.
 
@@ -64,7 +78,7 @@ docker compose up
 > You need to have an Internet connection to perform above command for the first time. \
 > First time setup will be take some time because it has to pull the `httpd` container image from the <a href="https://hub.docker.com/" target="_blank">docker hub.</a>
 
-At this point, you should be able to see your frontend application at `http://localhost:3000/`. We've used <a href="https://hub.docker.com/_/httpd">`httpd docker container image`</a> to serve this simple frontend app.  
+At this point, you should be able to see your frontend application at http://localhost:3000/. We've used <a href="https://hub.docker.com/_/httpd">`httpd docker container image`</a> to serve this simple frontend app.  
 
 You can press `Ctrl + c` in the terminal to stop all the containers.
 
@@ -75,7 +89,10 @@ Docker Hub is the world's largest container image library and community for `con
 
 ## Backend API Container
 Now Let's create our backend api container, \
-First, Let's add a new folder called `api` inside our main project directory and inside `api` folder let's create a new php file named `index.php`. 
+To create the backend API container, we will follow these steps:
+1. Create a new folder named `api` inside the main project directory.
+2. Inside the `api` folder, create a new PHP file named `index.php`.
+3. COPY & PASTE the below code snippet to your `index.php` file.
 
 Then let's add a simple todos api endpoint in our __index.php__ file.
 
@@ -114,14 +131,14 @@ $jsonResponse = json_encode($response);
 echo $jsonResponse;
 
 ```
-
-Here we're not going to make the Backend API container directly from a docker image pulled from the docker hub. Instead of that we're going to use a docker Build by making a __Dockerfile__ inside the main project directory.
+## Dockerfile
+In this case, I'm not going to make the Backend API container using the approach we've used to create our frontend container. We used a pre-existing Docker image directly from the Docker Hub to create the frontend container. Instead, we will create the Backend API container by writing the Docker Build process in a __Dockerfile__ located in the main project directory.
 
 ### What is a Dockerfile?
 Dockerfiles are used in Docker to define the configuration and instructions necessary to build a Docker image. Dockerfiles provide a simple and declarative way to automate the creation of Docker images, ensuring consistency and reproducibility across different environments. 
 
 We'll talk more about Dockerfiles in my upcoming articles.
-For now, Let's add the below `Dockerfile` inside our main project directory by naming it `Dockerfile` and you don't need to have an file extension for that. 
+For now, Let's add the below `Dockerfile` inside our main project directory by naming it `Dockerfile` and __you don't need to have an file extension for that.__ 
 
 **Dockerfile**
 ``` Dockerfile
@@ -194,7 +211,7 @@ After above change, your folder structure should look like this.
     ├── docker-compose.yml
     └── Dockerfile
 
-## Let's add a new container to the backend API
+## Add the backend service to `docker-compose.yml`
 Now Let's update the `docker-compose.yml` file with below code.
 > You should add the below snippet under the `services` section in your `docker-compose.yml` file. If you have any difficulties, feel free to visit the Github repository to the finalized version.
 
@@ -388,8 +405,116 @@ Let's add below code snippet to our `docker-compose.yml` file.
       - database
 ```
 
-Now you can access the database container through http://localhost:8080/ by using credentials that we've given when creating our database container.
+Rerun the terminal command `docker compose up` and Now you can access the database container through http://localhost:8080/ by using credentials that we've given when creating our database container.
 
 ## Let's retrieve data from our MySql Database container to backend API container
 
+### To make it work you need to do some changes in your api folder.
 
+1. Create a folder name `app` inside the api folder.
+2. Add below 3 files inside that `app` folder.
+
+__config.php__
+
+``` php
+<?php 
+define("DB_HOST", "database");
+define("DB_USERNAME", "todo_admin");
+define("DB_PASSWORD", "password");
+define("DB_NAME", "todo_app");
+```
+
+__Database.php__
+``` php
+<?php
+class Database
+{
+    protected $connection = null;
+    
+    public function __construct()
+    {
+        try {
+            $this->connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+            if (mysqli_connect_errno()) {
+                throw new Exception("Database connection failed!");
+            }
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    private function executeStatement($query = "", $params = [])
+    {
+        try {
+            $stmt = $this->connection->prepare($query);
+            if ($stmt === false) {
+                throw new Exception("Statement preperation failure: " . $query);
+            }
+            if ($params) {
+                $stmt->bind_param($params[0], $params[1]);
+            }
+            $stmt->execute();
+            return $stmt;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public function select($query = "", $params = [])
+    {
+        try {
+            $stmt = $this->executeStatement($query, $params);
+            $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $stmt->close();
+            return $result;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+        return false;
+    }
+}
+
+```
+
+__todos.php__
+
+``` php
+<?php 
+require_once "./app/Database.php";
+
+class Todo extends Database
+{
+    public function getTodos($limit)
+    {
+        return $this->select("SELECT * FROM todos");
+    }
+}
+```
+
+To connect all together let's update our `index.php` file with below code.
+
+``` php 
+<?php
+// Set the response content type to JSON
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: http://localhost:3000');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+
+require "./app/config.php";
+require_once "./app/todos.php";
+
+$todoModel = new Todo();
+$response = $todoModel->getTodos(10);
+// Create a response array
+
+// Encode the response array as JSON
+$jsonResponse = json_encode($response);
+
+// Output the JSON response
+echo $jsonResponse;
+```
+
+Now Let's rerun the terminal command `docker compose up` to see the changes that we've done. You should be able to see todos are fetching from the backend to frontend and backend is retrieving data from the database.
+
+
+# Summary
